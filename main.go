@@ -9,7 +9,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, world!"))
+		w.Write([]byte("Hello from the docker image!"))
 	})
 
 	err := http.ListenAndServe(":8000", mux)
