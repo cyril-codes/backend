@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Container registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            allandrow/cyril-codes:latest
+            allandrow/cyril-codes:${{ github.sha }}
