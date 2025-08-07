@@ -27,3 +27,25 @@ jobs:
           tags: |
             ghcr.io/cyril-codes/backend:latest
             ghcr.io/cyril-codes/backend:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-push-image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create envfile
+        run: |
+          echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./envfile
+
+      - name: Docker Stack deploy
+        uses: cssnr/stack-deploy-action@v1
+        with:
+          name: backend
+          file: docker-stack.yaml
+          host: cyril.codes
+          user: deploy
+          ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          env_file: ./envfile

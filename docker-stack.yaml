@@ -1,0 +1,5 @@
+services:
+  web:
+    image: ghcr.io/cyril-codes/backend:${GIT_COMMIT_HASH}
+    ports:
+      - "80:8000"
