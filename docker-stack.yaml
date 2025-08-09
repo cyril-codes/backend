@@ -1,5 +1,20 @@
 services:
+  traefik:
+    image: traefik:v3.5
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   web:
     image: ghcr.io/cyril-codes/backend:${GIT_COMMIT_HASH}
-    ports:
-      - "80:8000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.web.loadbalancer.server.port=8000"
+      - "traefik.http.routers.web.rule=Host(`cyril.codes`)"
+    deploy:
+      update_config:
+        order: start-first
