@@ -4,10 +4,18 @@ services:
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=your-cyriltiger@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     ports:
       - "80:80"
+      - "443:443"
     volumes:
+      - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
   web:
     image: ghcr.io/cyril-codes/backend:${GIT_COMMIT_HASH}
@@ -15,6 +23,12 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.web.loadbalancer.server.port=8000"
       - "traefik.http.routers.web.rule=Host(`cyril.codes`)"
+      - "traefik.http.routers.web.entrypoints=websecure"
+      - "traefik.http.routers.web.tls.certresolver=myresolver"
     deploy:
       update_config:
         order: start-first
+      replicas: 3
+
+volumes:
+  letsencrypt:
