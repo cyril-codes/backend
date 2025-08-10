@@ -22,7 +22,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.web.loadbalancer.server.port=8000"
-      - "traefik.http.routers.web.rule=Host(`cyril.codes`)"
+      - "traefik.http.routers.web.rule=Host(`cyril.codes`) && PathPrefix(`/api`)"
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls.certresolver=myresolver"
     deploy:
