@@ -1,3 +1,7 @@
+networks:
+  traefik:
+    driver: overlay
+
 services:
   traefik:
     image: traefik:v3.5
